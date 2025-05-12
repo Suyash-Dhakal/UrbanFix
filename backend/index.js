@@ -16,8 +16,6 @@ app.use('/api/auth',authRoutes);
 
 app.listen(PORT, () => {
     connectDB();
-    console.log(process.env.MONGO_URI);
-    
     console.log(`Server is running on port :${PORT}`);
 });
 
