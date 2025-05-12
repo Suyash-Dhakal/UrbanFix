@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     email: {
       type: String,
       required: true,
@@ -11,7 +15,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    name: {
+    address: {
       type: String,
       required: true,
     },
@@ -19,10 +23,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-    },
-    address: {
-      type: String,
-      required: true,
     },
     wardNumber: {
       type: String, // e.g., "Ward 1"
@@ -48,3 +48,5 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 ); // timestamps will add createdAt and updatedAt fields
+
+export const User = mongoose.model("User", userSchema);
