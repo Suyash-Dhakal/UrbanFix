@@ -89,9 +89,53 @@ export const verifyEmail=async (req,res)=>{
 }
 
 export const login= async (req,res)=>{
-    res.send('login');
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            throw new Error('All fields are required');
+        }
+
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({success:false ,message: 'Invalid credentials' });
+        }
+
+        // Check if password is correct
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({success:false ,message: 'Invalid credentials' });
+        }
+
+        // Check if user is verified
+        // if (!user.isVerified) {
+        //     return res.status(400).json({success:false ,message: 'Please verify your email first' });
+        // }
+
+        // jwt token
+        generateTokenAndSetCookie(res, user._id);
+
+        user.lastLogin = Date.now();
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Logged in successfully',
+            user: {
+                ...user._doc,
+                password: undefined, // Exclude password from response
+            },
+        });
+    } catch (error) {
+        return res.status(400).json({success:false ,message: error.message });
+    }
 }
 
 export const logout= async (req,res)=>{
-    res.send('logout');
+    res.clearCookie('token');
+    res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+    });
 }
