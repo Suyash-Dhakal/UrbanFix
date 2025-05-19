@@ -39,6 +39,10 @@ const issueSchema = new mongoose.Schema({
     default: 'pending',
     index: true
   },
+  commentCount: {
+  type: Number,
+  default: 0
+  },
   adminFeedback: {
     type: String,
     default: ''
