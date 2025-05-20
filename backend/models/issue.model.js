@@ -28,10 +28,6 @@ const issueSchema = new mongoose.Schema({
   type: String, // holds the entire base64 string
   required: true,
   },
-  reportedAt: {
-    type: Date,
-    default: Date.now
-  },
   reportedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -55,4 +51,4 @@ const issueSchema = new mongoose.Schema({
   timestamps: true // automatically adds createdAt and updatedAt
 });
 
-module.exports = mongoose.model('Issue', issueSchema);
+export const Issue = mongoose.model("Issue", issueSchema);
