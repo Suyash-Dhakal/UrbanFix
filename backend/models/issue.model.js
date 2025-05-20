@@ -24,9 +24,13 @@ const issueSchema = new mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true }
   },
-  images: {
-    type: [String], // URLs or paths
-    default: []
+  image: {
+  type: String, // holds the entire base64 string
+  required: true,
+  },
+  reportedAt: {
+    type: Date,
+    default: Date.now
   },
   reportedBy: {
     type: mongoose.Schema.Types.ObjectId,
