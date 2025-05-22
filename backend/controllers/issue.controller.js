@@ -1,10 +1,6 @@
 import {Issue} from '../models/issue.model.js';
 
 
-export const reportIssue=async (req,res)=>{
-
-}
-
 export const confirmReport=async (req,res)=>{
     const { title, category, description, ward, location, image } = req.body;
     try {
