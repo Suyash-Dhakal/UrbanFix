@@ -1,3 +1,4 @@
+import e from 'express';
 import {Issue} from '../models/issue.model.js';
 
 
@@ -90,6 +91,73 @@ export const getWardStats= async (req,res)=>{
                 numberOfCancelledIssues: cancelled
             }
         });
+    } catch (error) {
+        return res.status(400).json({success:false ,message: error.message });
+    }
+}
+
+export const getPendingIssues= async (req,res)=>{
+   try {
+    const ward=req.ward;
+    const pendingIssues= await Issue.find({ward, status:'pending'});
+    if(!pendingIssues || pendingIssues.length === 0){
+        return res.status(404).json({success:false ,message: 'No pending issues found'});
+    }
+    res.status(200).json({
+        success: true,
+        issues: pendingIssues,
+    });
+   } catch (error) {
+        return res.status(400).json({success:false ,message: error.message });
+   } 
+}
+
+export const getVerifiedIssues= async (req,res)=>{
+    try {
+    const ward=req.ward;
+    const verifiedIssues= await Issue.find({ward, status:'verified'});
+    if(!verifiedIssues || verifiedIssues.length === 0){
+        return res.status(404).json({success:false ,message: 'No verified issues found'});
+    }
+    res.status(200).json({
+        success: true,
+        issues: verifiedIssues,
+    });
+   } catch (error) {
+        return res.status(400).json({success:false ,message: error.message });
+   }
+}
+
+export const getTopContributors= async (req,res)=>{
+    try {
+        const topContributors = await Issue.aggregate([
+            {$match: {status:'verified'}},
+            {$group: {_id:'$reportedBy', verifiedCount: {$sum: 1}}},
+            {$sort: {verifiedCount: -1}},
+            {$limit: 3},
+            {
+                $lookup:{
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'userInfo'
+                }
+            },
+            {$unwind: '$userInfo'},
+            {
+                $project:{
+                    _id: 0,
+                    userId: '$userInfo._id',
+                    name: '$userInfo.name',
+                    email: '$userInfo.email',
+                    verifiedCount: 1,
+                    ward: '$userInfo.wardNumber',
+                }
+            }
+        ]);
+        if(!topContributors || topContributors.length === 0){
+            return res.status(404).json({success:false ,message: 'No Top Contributors found'});
+        }
     } catch (error) {
         return res.status(400).json({success:false ,message: error.message });
     }
