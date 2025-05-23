@@ -1,4 +1,3 @@
-import e from 'express';
 import {Issue} from '../models/issue.model.js';
 
 
@@ -116,6 +115,7 @@ export const getVerifiedIssues= async (req,res)=>{
     try {
     const ward=req.ward;
     const verifiedIssues= await Issue.find({ward, status:'verified'});
+    
     if(!verifiedIssues || verifiedIssues.length === 0){
         return res.status(404).json({success:false ,message: 'No verified issues found'});
     }
@@ -128,9 +128,9 @@ export const getVerifiedIssues= async (req,res)=>{
    }
 }
 
-export const getTopContributors= async (req,res)=>{
+export const getTopReporters= async (req,res)=>{
     try {
-        const topContributors = await Issue.aggregate([
+            const topContributors = await Issue.aggregate([
             {$match: {status:'verified'}},
             {$group: {_id:'$reportedBy', verifiedCount: {$sum: 1}}},
             {$sort: {verifiedCount: -1}},
@@ -154,10 +154,14 @@ export const getTopContributors= async (req,res)=>{
                     ward: '$userInfo.wardNumber',
                 }
             }
-        ]);
-        if(!topContributors || topContributors.length === 0){
+           ]);
+           if(!topContributors || topContributors.length === 0){
             return res.status(404).json({success:false ,message: 'No Top Contributors found'});
-        }
+          }
+              res.status(200).json({
+                success: true,
+                topContributors,})
+            
     } catch (error) {
         return res.status(400).json({success:false ,message: error.message });
     }

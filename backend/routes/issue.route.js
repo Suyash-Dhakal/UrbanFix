@@ -2,7 +2,7 @@ import express from 'express';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { checkSimilarity } from '../middleware/checkSimilarity.js';
 import {confirmReport, getUserReportedIssues, getUserStats,
-getWardStats, getPendingIssues, getVerifiedIssues, getTopContributors
+getWardStats, getPendingIssues, getVerifiedIssues, getTopReporters
 } from '../controllers/issue.controller.js';
 import { isAdmin } from '../middleware/isAdmin.js';
 
@@ -21,6 +21,6 @@ router.get('/admin/pending-verification', verifyToken, isAdmin, getPendingIssues
 router.get('/admin/verified', verifyToken, isAdmin, getVerifiedIssues);
 
 //top contributors
-router.get('/top-contributors', getTopContributors);
+router.get('/top-reporters', getTopReporters);
 
 export default router;
