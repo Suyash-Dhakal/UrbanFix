@@ -166,3 +166,72 @@ export const getTopReporters= async (req,res)=>{
         return res.status(400).json({success:false ,message: error.message });
     }
 }
+
+export const getTopWards= async (req,res)=>{
+    try {
+     const topWards = await Issue.aggregate([
+      {
+        $group: {
+          _id: "$ward",
+          totalIssues: { $sum: 1 },
+          resolvedIssues: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "resolved"] }, 1, 0]
+            }
+          },
+          totalResolutionTime: {
+            $sum: {
+              $cond: [
+                { $eq: ["$status", "resolved"] },
+                { $subtract: ["$updatedAt", "$createdAt"] },
+                0
+              ]
+            }
+          }
+        }
+      },
+      {
+        $addFields: {
+          resolutionRate: {
+            $cond: [
+              { $gt: ["$totalIssues", 0] },
+              { $divide: ["$resolvedIssues", "$totalIssues"] },
+              0
+            ]
+          },
+          avgResolutionTime: {
+            $cond: [
+              { $gt: ["$resolvedIssues", 0] },
+              { $divide: ["$totalResolutionTime", "$resolvedIssues"] },
+              null
+            ]
+          }
+        }
+      },
+      {
+        $sort: {
+          resolutionRate: -1,
+          resolvedIssues: -1,
+          avgResolutionTime: 1
+        }
+      },
+      {
+        $limit: 3
+      },
+      {
+        $project: {
+          _id: 0,
+          ward: "$_id",
+          totalIssues: 1,
+          resolvedIssues: 1,
+          resolutionRate: 1,
+          avgResolutionTime: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(topWards);   
+    } catch (error) {
+        return res.status(400).json({success:false ,message: error.message });
+    }
+}
