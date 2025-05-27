@@ -17,6 +17,8 @@ export const checkSimilarity=async (req,res,next)=>{
     const similarIssues=[];
     for(const issue of existingIssues){
         const similarityScore=await cosineSimilarity(description, issue.description);
+        console.log(similarityScore,'similarity score');
+        
         if(similarityScore>0.75){
             similarIssues.push({
                 id: issue._id,

@@ -1,4 +1,5 @@
 import {Issue} from '../models/issue.model.js';
+import { User } from '../models/user.model.js';
 
 
 export const confirmReport=async (req,res)=>{
@@ -128,10 +129,58 @@ export const getVerifiedIssues= async (req,res)=>{
    }
 }
 
+export const getWardUsers= async (req,res)=>{
+  try {
+    const wardUsers= await User.find({wardNumber: req.ward, role: 'user'});
+    
+    
+    if(!wardUsers || wardUsers.length === 0){
+      return res.status(404).json({success:false ,message: 'No users found in this ward'});
+    }
+
+    //prepare individual user data
+    const usersData= wardUsers.map(async(user)=>{ //usersData is an array of promises
+      const totalReports= await Issue.countDocuments({user: user._id});
+      const verifiedReports= await Issue.countDocuments({user: user._id, status: 'verified'});
+      const resolvedReports= await Issue.countDocuments({user: user._id, status: 'resolved'});
+      return {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        totalReports,
+        verifiedReports,
+        resolvedReports,
+      };
+    });
+
+    // Wait for all promises to resolve
+    const resolvedUsersData = await Promise.all(usersData);
+
+    //get ward totals
+    const userIds= wardUsers.map((u)=>u._id);
+    const totalUsers= usersData.length;
+    const totalReports= await Issue.countDocuments({user: {$in: userIds}});
+    const totalVerifiedReports= await Issue.countDocuments({user: {$in: userIds}, status: 'verified'});
+    const totalResolvedReports= await Issue.countDocuments({user: {$in: userIds}, status: 'resolved'});
+
+    return res.status(200).json({
+      success: true,
+      users: resolvedUsersData,
+      totalUsers,
+      totalReports,
+      totalVerifiedReports,
+      totalResolvedReports
+    });
+  } catch (error) {
+    return res.status(400).json({success:false ,message: error.message });
+  }
+}
+
 export const getTopReporters= async (req,res)=>{
     try {
             const topContributors = await Issue.aggregate([
-            {$match: {status:'verified'}},
+            {$match: {status:{ $in: ['verified', 'resolved'] }}},
             {$group: {_id:'$reportedBy', verifiedCount: {$sum: 1}}},
             {$sort: {verifiedCount: -1}},
             {$limit: 3},
@@ -234,4 +283,19 @@ export const getTopWards= async (req,res)=>{
     } catch (error) {
         return res.status(400).json({success:false ,message: error.message });
     }
+}
+
+export const getAllVerifiedIssues= async (req,res)=>{
+  try {
+    const allVerifiedIssues= await Issue.find({status:'verified'});
+    if(!allVerifiedIssues || allVerifiedIssues.length === 0){
+      return res.status(404).json({success:false ,message: 'No verified issues found'});
+    }
+    res.status(200).json({
+      success: true,
+      issues: allVerifiedIssues,
+    });
+  } catch (error) {
+    return res.status(400).json({success:false ,message: error.message });
+  }
 }

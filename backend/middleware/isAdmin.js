@@ -17,6 +17,7 @@ export const isAdmin = async (req, res, next) => {
         });
     }
     req.ward = user.wardNumber; // Assuming the user model has a wardNumber field
+    
     next();
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
