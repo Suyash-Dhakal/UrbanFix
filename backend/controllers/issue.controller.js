@@ -1,5 +1,6 @@
 import {Issue} from '../models/issue.model.js';
 import { User } from '../models/user.model.js';
+import {getDateRange} from '../utils/dateUtils.js';
 
 
 export const confirmReport=async (req,res)=>{
@@ -295,6 +296,119 @@ export const getAllVerifiedIssues= async (req,res)=>{
       success: true,
       issues: allVerifiedIssues,
     });
+  } catch (error) {
+    return res.status(400).json({success:false ,message: error.message });
+  }
+}
+
+export const getAnalyticsByRange= async (req,res)=>{
+  try {
+    const {range}=req.query;
+    const adminWard=req.ward;
+    const {from, to}= getDateRange(range);
+    const [
+    issuesOverTimeAgg,
+    issuesByWard,
+    issuesByCategory,
+    issuesByStatus
+    ]= await Promise.all([
+      // Issues over time (verified + resolved counts per day)
+ Issue.aggregate([
+  {
+    $match:{
+      ward: adminWard,
+      status: {$in:['verified', 'resolved']},
+      createdAt: {$gte:from, $lte:to}
+    }
+  },
+  {
+    $group:{
+      _id:{
+        date: {$dateToString: {format: '%Y-%m-%d', date: '$createdAt'}},
+        status: '$status'
+      },
+      count: {$sum: 1}
+    }
+  },
+  {
+    $group: {
+      _id: '$_id.date',
+      counts:{
+        $push:{
+          status: '$_id.status',
+          count: '$count'
+        }
+      }
+    }
+  },
+  {
+    $sort: {'_id': 1}
+  }
+]),
+
+// Issues By Ward (total verified issues of all wards)
+Issue.aggregate([
+  {
+    $match: {status: 'verified', createdAt: {$gte:from, $lte:to}}
+  },
+  {
+    $group: {
+      _id:'$ward',
+      count: {$sum: 1}
+    }
+  }
+]),
+
+// Issues By Category (verified issues in admin's ward)
+Issue.aggregate([
+  {
+    $match:{
+      ward: adminWard,
+      status: 'verified',
+      createdAt: {$gte:from, $lte:to}
+    }
+  },
+  {
+    $group:{
+      _id:'$category',   // fixed here
+      count: {$sum: 1}
+    }
+  }
+]),
+
+// Issues By Status (all issues in admin's ward)
+Issue.aggregate([
+  {
+    $match:{
+      ward:adminWard,
+      createdAt: {$gte:from, $lte:to}
+    }
+  },
+  {
+    $group:{
+      _id:'$status',
+      count: {$sum: 1}
+    }
+  }
+])]);
+
+    // Transform Issues Over Time to structured daily counts
+    const issuesOverTime = issuesOverTimeAgg.map(day => {
+      const countsObj = { date: day._id, verified: 0, resolved: 0 };
+      day.counts.forEach(c => {
+        if (c.status === 'verified') countsObj.verified = c.count;
+        if (c.status === 'resolved') countsObj.resolved = c.count;
+      });
+      return countsObj;
+    });
+
+    res.status(200).json({
+      issuesOverTime,
+      issuesByWard,
+      issuesByCategory,
+      issuesByStatus
+    });
+
   } catch (error) {
     return res.status(400).json({success:false ,message: error.message });
   }
