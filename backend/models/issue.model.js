@@ -26,7 +26,6 @@ const issueSchema = new mongoose.Schema({
   },
   image: {
   type: String, // holds the entire base64 string
-  required: true,
   },
   reportedBy: {
     type: mongoose.Schema.Types.ObjectId,

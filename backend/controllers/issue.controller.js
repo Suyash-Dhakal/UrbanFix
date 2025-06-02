@@ -6,8 +6,10 @@ import {getDateRange} from '../utils/dateUtils.js';
 export const confirmReport=async (req,res)=>{
     const { title, category, description, ward, location, image } = req.body;
     try {
+      
+      
         const userId = req.userId; // Get userId from the request object
-        if(!title || !category || !description || !ward || !location || !image){
+        if(!title || !category || !description || !ward || !location){
             throw new Error('All fields are required');
         }
         const issue = new Issue({
