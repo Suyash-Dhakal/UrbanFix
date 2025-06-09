@@ -415,3 +415,56 @@ Issue.aggregate([
     return res.status(400).json({success:false ,message: error.message });
   }
 }
+
+export const getReports= async (req,res)=>{
+  try {
+    const {category, ward, status} = req.query;
+    const filter= {
+      status: {$in: ['verified', 'resolved']}, // Default filter
+    };
+
+    //override default filter based on query params
+    if(status){
+      filter.status = status; // Set specific status if provided
+    }
+    if(category){
+      filter.category = category; // Set specific category if provided
+    }
+    if(ward){
+      filter.ward = ward; // Set specific ward if provided
+    }
+
+    const reports= await Issue.find(filter)
+    .populate('reportedBy', 'name') // Populate user details
+    .select('_id title category description ward image status createdAt reportedBy') // Select only necessary fields
+    .exec(); // Execute the query
+
+    if(!reports || reports.length === 0){
+      return res.status(404).json({success:false ,message: 'No reports found'});
+    }
+    res.status(200).json({
+      success: true,
+      reports,
+    });
+
+  } catch (error) {
+    return res.status(400).json({success:false ,message: error.message });  
+  }
+}
+
+export const getReportById= async (req,res)=>{
+  const {id}= req.params;
+  try {
+    const report = await Issue.findById(id)
+    .populate('reportedBy', 'name'); // Populate user details
+    if(!report){
+      return res.status(404).json({success:false ,message: 'Report not found'});
+    }
+    res.status(200).json({
+      success: true,
+      report,
+    });
+  } catch (error) {
+    return res.status(400).json({success:false ,message: error.message });
+  }
+}

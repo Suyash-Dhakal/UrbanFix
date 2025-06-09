@@ -3,7 +3,7 @@ import { verifyToken } from '../middleware/verifyToken.js';
 import { checkSimilarity } from '../middleware/checkSimilarity.js';
 import {confirmReport, getUserReportedIssues, getUserStats,
 getWardStats, getPendingIssues, getVerifiedIssues, getTopReporters, getTopWards,
-getAllVerifiedIssues, getWardUsers, getAnalyticsByRange
+getAllVerifiedIssues, getWardUsers, getAnalyticsByRange, getReports, getReportById
 } from '../controllers/issue.controller.js';
 import { isAdmin } from '../middleware/isAdmin.js';
 
@@ -29,5 +29,8 @@ router.get('/analytics', verifyToken, isAdmin, getAnalyticsByRange);
 //top contributors
 router.get('/top-reporters', getTopReporters);
 router.get('/top-performing-wards', getTopWards);
+
+router.get('/reports', getReports);
+router.get('/report/:id', getReportById);
 
 export default router;
