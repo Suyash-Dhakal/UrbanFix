@@ -404,7 +404,20 @@ Issue.aggregate([
       return countsObj;
     });
 
+    const [totalVerified, totalPending, totalResolved] = await Promise.all([
+  Issue.countDocuments({ ward: adminWard, status: 'verified', createdAt: { $gte: from, $lte: to } }),
+  Issue.countDocuments({ ward: adminWard, status: 'pending', createdAt: { $gte: from, $lte: to } }),
+  Issue.countDocuments({ ward: adminWard, status: 'resolved', createdAt: { $gte: from, $lte: to } })
+]);
+
+const totalReported = totalVerified + totalPending;
+const resolutionRate = totalReported === 0 ? 0 : ((totalResolved / totalReported) * 100).toFixed(2); 
+
     res.status(200).json({
+      totalReported,
+  totalResolved,
+  totalPending,
+  resolutionRate,
       issuesOverTime,
       issuesByWard,
       issuesByCategory,
