@@ -23,6 +23,8 @@ export const checkSimilarity=async (req,res,next)=>{
                 id: issue._id,
                 title: issue.title,
                 description: issue.description,
+                ward: issue.ward,
+                image: Array.isArray(issue.image) ? issue.image : (issue.image ? [issue.image] : []),
                 similarity: (similarityScore * 100).toFixed(2) + '%'
             });
         }
