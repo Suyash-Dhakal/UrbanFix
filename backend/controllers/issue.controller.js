@@ -317,26 +317,26 @@ export const getAnalyticsByRange= async (req,res)=>{
       // Issues over time (verified + resolved counts per day)
  Issue.aggregate([
   {
-    $match:{
+    $match: {
       ward: adminWard,
-      status: {$in:['verified', 'resolved']},
-      createdAt: {$gte:from, $lte:to}
+      status: { $in: ['verified', 'resolved'] },
+      updatedAt: { $gte: from, $lte: to }
     }
   },
   {
-    $group:{
-      _id:{
-        date: {$dateToString: {format: '%Y-%m-%d', date: '$createdAt'}},
+    $group: {
+      _id: {
+        date: { $dateToString: { format: '%Y-%m-%d', date: '$updatedAt' } },
         status: '$status'
       },
-      count: {$sum: 1}
+      count: { $sum: 1 }
     }
   },
   {
     $group: {
       _id: '$_id.date',
-      counts:{
-        $push:{
+      counts: {
+        $push: {
           status: '$_id.status',
           count: '$count'
         }
@@ -344,7 +344,7 @@ export const getAnalyticsByRange= async (req,res)=>{
     }
   },
   {
-    $sort: {'_id': 1}
+    $sort: { '_id': 1 }
   }
 ]),
 
