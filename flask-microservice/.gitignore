@@ -1,0 +1,10 @@
+.DS_Store
+.env
+
+node_modules
+
+urban-app-101 copy
+
+*.pkl
+
+*.csv
