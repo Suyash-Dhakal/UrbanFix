@@ -1,17 +1,13 @@
 # 🏙️ UrbanFix: An Intelligent E-Governance System for Civic Issue Management
 
-> A full-stack web-based platform to empower citizens to report urban issues to local governments. Built using React, Node.js, MongoDB, and Flask-powered ML microservices. Developed as part of the B.Sc. CSIT Final Year Project at Tribhuvan University, CCT Dharan.
+> A full-stack web-based platform to empower citizens to report urban issues to local governments. Built using React, Node.js, MongoDB, and Flask-powered ML microservice. Developed as part of the B.Sc. CSIT Final Year Project at CCT Dharan.
 
-![Project Preview](preview.jpg) <!-- Replace with image path -->
-
-[![Watch Demo](https://img.shields.io/badge/Watch%20Demo-Click%20Here-blue?logo=youtube)](https://your-cloud-video-link.mp4)  
-<!-- Replace above with the actual video link. GitHub doesn't support direct video embedding, so link to Google Drive, Cloudinary, or YouTube. -->
 
 ---
 
-## 📽️ Preview: User Dashboard
+## 📽️ Preview: Landing Page
 
-https://github.com/user-attachments/assets/3dc5d3c9-2d1b-4f31-9f31-9ac24aa41d52
+https://github.com/user-attachments/assets/14404b63-941b-4da8-ad06-f9001f2ae69c
 
 ---
 
@@ -34,10 +30,25 @@ https://github.com/user-attachments/assets/3dc5d3c9-2d1b-4f31-9f31-9ac24aa41d52
 - Blocks comparison scope by **ward + category** for performance.
 - Prompts user if similarity ≥ 70% to reduce redundancy.
 
-### 2. 🏷️ Multi-Class Classification (Category Prediction)
+---
+
+## 📽️ Preview: Cosine Similarity for Duplicate Detection
+
+https://github.com/user-attachments/assets/2e12c3fa-390d-44ba-ac5c-4cf08a5c9c2b
+
+---
+
+
+### 2. 🏷️ Multi-Label Classification (Category Prediction)
 - Titles vectorized using **SpaCy’s `en_core_web_lg` model**.
 - Logistic Regression classifier predicts category onBlur.
 - Enhances admin efficiency and user experience.
+
+---
+
+## 📽️ Preview: Multi-Label Classification (Category Prediction)
+
+https://github.com/user-attachments/assets/e7fb4105-5b31-4ae5-9b5e-fc08040e725e
 
 ---
 
@@ -60,13 +71,36 @@ https://github.com/user-attachments/assets/3dc5d3c9-2d1b-4f31-9f31-9ac24aa41d52
 
 ---
 
-## 🔄 Flowcharts & Diagrams
+## 🔄 Flowchart
 
 ### 🧭 System Flowchart  
-![System Flow](flowchart.png) <!-- Replace with actual image path -->
+![Image](https://github.com/user-attachments/assets/ac03d352-1147-4d6a-972f-d6cd9e8b6a58)
 
-### 🧩 Use Case Diagram  
-![Use Case](usecase.png) <!-- Replace with actual image path -->
+---
+
+### 🎬 Video Demo & Other Previews
+<details>
+<summary>Click to expand</summary>
+
+### User Dashboard
+https://github.com/user-attachments/assets/0efb6bc0-e273-46e5-9c9b-603aafac0736
+
+### All Issues View
+https://github.com/user-attachments/assets/5e4269d0-9958-4736-a142-47e2218f25fe
+
+### Map View
+https://github.com/user-attachments/assets/57cac05c-0138-4fdb-b4c6-dc42a2381eeb
+
+### Analytics View
+https://github.com/user-attachments/assets/d282c992-4ef0-40ed-99f0-29b8906673c7
+
+### Verification Panel
+https://github.com/user-attachments/assets/fccac6fc-df81-40fa-ab4c-0fc84e579804
+
+### Hall of Fame
+https://github.com/user-attachments/assets/b70b7a4b-e73b-4052-adf8-4d755d42ec96
+
+</details>
 
 ---
 
@@ -84,22 +118,12 @@ https://github.com/user-attachments/assets/3dc5d3c9-2d1b-4f31-9f31-9ac24aa41d52
 
 ---
 
-## 🧪 Expected Output
-
-- Verified civic issues mapped and visible publicly
-- Interactive dashboards for both citizens and ward officials
-- Prevention of duplicate complaints
-- ML-powered classification for smoother administration
-
----
-
 ## 📁 Repository Structure
 
 ```bash
 UrbanFix/
-├── client/                 # React Frontend
+├── frontend/               # React Frontend
 ├── server/                 # Node.js Backend
-├── ml-service/            # Flask Microservice
-├── public/                # Static assets (preview images, diagrams)
+├── flask-microservice/     # Flask API
+├── .gitignore              
 └── README.md
-
