@@ -1,10 +1,25 @@
+# macOS system file
 .DS_Store
+
+# Environment variables
 .env
 
-node_modules
+# Node.js dependencies
+node_modules/
 
-urban-app-101 copy
+# Backup or copied folders
+urban-app-101 copy/
 
+# Python cache and build artifacts
+__pycache__/
+*.pyc
+
+# ML models and datasets
 *.pkl
-
 *.csv
+
+# Jupyter notebooks (ignore all for now, can allow later if needed)
+*.ipynb
+
+# VS Code and editor settings
+.vscode/
