@@ -71,10 +71,13 @@ https://github.com/user-attachments/assets/e7fb4105-5b31-4ae5-9b5e-fc08040e725e
 
 ---
 
-## 🔄 Flowchart
+## 🛠️ System Design 
+
+### 🧩 Use Case Diagram
+![Use Case Diagram](assets/use-case-diagram.png)
 
 ### 🧭 System Flowchart  
-![Image](https://github.com/user-attachments/assets/ac03d352-1147-4d6a-972f-d6cd9e8b6a58)
+![System Flowchart](assets/system-flowchart.png)
 
 ---
 
@@ -122,9 +125,11 @@ https://github.com/user-attachments/assets/b70b7a4b-e73b-4052-adf8-4d755d42ec96
 
 ```bash
 UrbanFix/
-├── frontend/               # React Frontend 
-├── backend/                # Node.js Backend
+├── frontend/               # React Frontend
+├── backend/                # Node.js Backend 
 ├── flask-microservice/     # Flask API
+├── assets/                 # System design diagrams 
 ├── .gitignore
 ├── Project_Proposal.pdf
 └── README.md
+
