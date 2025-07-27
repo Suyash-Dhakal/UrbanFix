@@ -122,8 +122,9 @@ https://github.com/user-attachments/assets/b70b7a4b-e73b-4052-adf8-4d755d42ec96
 
 ```bash
 UrbanFix/
-├── frontend/               # React Frontend
-├── server/                 # Node.js Backend
+├── frontend/               # React Frontend 
+├── backend/                # Node.js Backend
 ├── flask-microservice/     # Flask API
-├── .gitignore              
+├── .gitignore
+├── Project_Proposal.pdf
 └── README.md
