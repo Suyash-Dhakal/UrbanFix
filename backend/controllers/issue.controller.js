@@ -104,7 +104,7 @@ export const getPendingIssues= async (req,res)=>{
     const ward=req.ward;
     const pendingIssues= await Issue.find({ward, status:'pending'});
     if(!pendingIssues || pendingIssues.length === 0){
-        return res.status(404).json({success:false ,message: 'No pending issues found'});
+        return res.status(200).json({success:true ,message: 'No pending issues found', issues:[]});
     }
     res.status(200).json({
         success: true,
@@ -121,7 +121,7 @@ export const getVerifiedIssues= async (req,res)=>{
     const verifiedIssues= await Issue.find({ward, status:'verified'});
     
     if(!verifiedIssues || verifiedIssues.length === 0){
-        return res.status(404).json({success:false ,message: 'No verified issues found'});
+        return res.status(200).json({success:true ,message: 'No verified issues found', issues:[]});
     }
     res.status(200).json({
         success: true,
@@ -479,5 +479,87 @@ export const getReportById= async (req,res)=>{
     });
   } catch (error) {
     return res.status(400).json({success:false ,message: error.message });
+  }
+}
+
+export const verifyIssue= async (req,res)=>{
+  const { id } = req.body;
+try {
+    // Bad request: missing input
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Issue ID is required" });
+    }
+
+    const issue = await Issue.findById(id);
+
+    // Not found: resource doesn't exist
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    issue.status = "verified";
+    await issue.save();
+
+    return res.status(200).json({ success: true, message: "Issue verified successfully" });
+
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500) // unexpected error → server error
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+export const cancelIssue = async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    // Bad request: missing input
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Issue ID is required" });
+    }
+
+    const issue = await Issue.findById(id);
+
+    // Not found: resource doesn't exist
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+
+    issue.status = "cancelled";
+    await issue.save();
+
+    return res.status(200).json({ success: true, message: "Issue cancelled successfully" });
+
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500) // unexpected error → server error
+      .json({ success: false, message: "Something went wrong" });
+  }
+};
+
+export const resolveIssue= async(req,res)=>{
+  const { id } = req.body;
+  try {
+    // Bad request: missing input
+    if (!id) {
+      return res.status(400).json({ success: false, message: "Issue ID is required" });
+    }
+
+    const issue = await Issue.findById(id);
+
+    // Not found: resource doesn't exist
+    if (!issue) {
+      return res.status(404).json({ success: false, message: "Issue not found" });
+    }
+    issue.status = "resolved";
+    await issue.save();
+    res.status(200).json({ success: true, message: "Issue resolved successfully" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500) // unexpected error → server error
+      .json({ success: false, message: "Something went wrong" });
   }
 }

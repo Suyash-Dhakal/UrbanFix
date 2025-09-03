@@ -3,7 +3,8 @@ import { verifyToken } from '../middleware/verifyToken.js';
 import { checkSimilarity } from '../middleware/checkSimilarity.js';
 import {confirmReport, getUserReportedIssues, getUserStats,
 getWardStats, getPendingIssues, getVerifiedIssues, getTopReporters, getTopWards,
-getAllVerifiedIssues, getWardUsers, getAnalyticsByRange, getReports, getReportById
+getAllVerifiedIssues, getWardUsers, getAnalyticsByRange, getReports, getReportById,
+verifyIssue, cancelIssue, resolveIssue
 } from '../controllers/issue.controller.js';
 import { isAdmin } from '../middleware/isAdmin.js';
 
@@ -21,6 +22,10 @@ router.get('/admin/ward-stats', verifyToken, isAdmin, getWardStats);
 router.get('/admin/pending-verification', verifyToken, isAdmin, getPendingIssues);
 router.get('/admin/verified', verifyToken, isAdmin, getVerifiedIssues);
 router.get('/admin/ward-users', verifyToken, isAdmin, getWardUsers);
+// the below needs to be changed it's temp since we are sending id from the req.body not using params
+router.post('/admin/verify-issue', verifyToken, isAdmin, verifyIssue);
+router.post('/admin/reject-issue', verifyToken, isAdmin, cancelIssue);
+router.post('/admin/resolve-issue', verifyToken, isAdmin, resolveIssue);
 
 //Common
 router.get('/verified-issues', getAllVerifiedIssues);
