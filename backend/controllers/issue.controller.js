@@ -1,6 +1,7 @@
 import {Issue} from '../models/issue.model.js';
 import { User } from '../models/user.model.js';
 import {getDateRange} from '../utils/dateUtils.js';
+import { createNotification } from '../utils/notification.js';
 
 
 export const confirmReport=async (req,res)=>{
@@ -22,6 +23,21 @@ export const confirmReport=async (req,res)=>{
             reportedBy: userId, // Use the userId from the request object
         });
         await issue.save();
+        // Create and send notification to the admin of respective ward
+        const admin = await User.findOne({wardNumber: ward, role: 'admin'}).select('_id');
+        if(!admin){
+          console.warn(`No admin found for ward ${ward}. Notification not sent.`);
+        }
+        else{
+        await createNotification({
+          recipientId: admin._id,
+            issueId: issue._id,
+            type: 'issue_reported',
+            title: `New issue of category ${category} reported`,
+            message: `A new issue titled "${title}" has been reported in your ward. Please review and take necessary action.`,
+            status: 'unread'
+        })
+      }
         res.status(201).json({
             success: true,
             message: 'Issue reported successfully',
@@ -499,7 +515,22 @@ try {
 
     issue.status = "verified";
     await issue.save();
-
+        // Create and send notification to the user who reported the issue
+        const user = await User.findById(issue.reportedBy).select('_id');
+        const {category, title, ward}= issue;
+        if(!user){
+          console.warn(`No user found for issue ${id}. Notification not sent.`);
+        }
+        else{
+        await createNotification({
+          recipientId: user._id,
+            issueId: issue._id,
+            type: 'status_changed',
+            title: `Your reported issue of category ${category} has been verified`,
+            message: `The issue titled "${title}" reported in ward ${ward} has been verified by the admin.`,
+            status: 'unread'
+        })
+      }
     return res.status(200).json({ success: true, message: "Issue verified successfully" });
 
   } catch (error) {
@@ -528,6 +559,22 @@ export const cancelIssue = async (req, res) => {
 
     issue.status = "cancelled";
     await issue.save();
+        // Create and send notification to the user who reported the issue
+        const user = await User.findById(issue.reportedBy).select('_id');
+        const {category, title, ward}= issue;
+        if(!user){
+          console.warn(`No user found for issue ${id}. Notification not sent.`);
+        }
+        else{
+        await createNotification({
+          recipientId: user._id,
+            issueId: issue._id,
+            type: 'status_changed',
+            title: `Your reported issue of category ${category} has been cancelled`,
+            message: `The issue titled "${title}" reported in ward ${ward} has been cancelled by the admin.`,
+            status: 'unread'
+        })
+      }
 
     return res.status(200).json({ success: true, message: "Issue cancelled successfully" });
 
@@ -555,7 +602,46 @@ export const resolveIssue= async(req,res)=>{
     }
     issue.status = "resolved";
     await issue.save();
+        // Create and send notification to the user who reported the issue
+        const user = await User.findById(issue.reportedBy).select('_id');
+        const {category, title, ward}= issue;
+        if(!user){
+          console.warn(`No user found for issue ${id}. Notification not sent.`);
+        }
+        else{
+        await createNotification({
+          recipientId: user._id,
+            issueId: issue._id,
+            type: 'status_changed',
+            title: `Your reported issue of category ${category} has been resolved`,
+            message: `The issue titled "${title}" reported in ward ${ward} has been resolved by the admin.`,
+            status: 'unread'
+        })
+      }
+
     res.status(200).json({ success: true, message: "Issue resolved successfully" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500) // unexpected error → server error
+      .json({ success: false, message: "Something went wrong" });
+  }
+}
+
+export const getMyReports = async (req, res)=>{
+  try {
+    const userId = req.userId;
+    const myReports = await Issue.find({ reportedBy: userId })
+      .select('_id title category description ward image status createdAt updatedAt'); // Select only necessary fields
+      
+    if (!myReports || myReports.length === 0) {
+      return res.status(200).json({ success: true, message: 'No reports found', reports: [] });
+    }
+    const pendingCount = myReports.filter(report => report.status === 'pending').length;
+    const verifiedCount = myReports.filter(report => report.status === 'verified').length;
+    const resolvedCount = myReports.filter(report => report.status === 'resolved').length;
+    const cancelledCount = myReports.filter(report => report.status === 'cancelled').length;
+    res.status(200).json({ success: true, pending: pendingCount, verified: verifiedCount, resolved: resolvedCount, cancelled: cancelledCount, reports: myReports });
   } catch (error) {
     console.error(error);
     return res
