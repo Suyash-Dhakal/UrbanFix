@@ -649,3 +649,30 @@ export const getMyReports = async (req, res)=>{
       .json({ success: false, message: "Something went wrong" });
   }
 }
+
+export const deleteReport = async (req, res)=>{
+  const {id}= req.params;
+  try {
+    if(!id){
+      return res.status(400).json({success:false, message: 'Report ID is required'});
+    }
+    const userId= req.userId;
+    const report = await Issue.findOne({_id: id});
+    if(!report){
+      return res.status(404).json({success:false, message: 'Report not found or you are not authorized to delete this report'});
+    }
+    if(report.reportedBy.toString() !== userId){
+      return res.status(403).json({success:false, message: 'You are not authorized to delete this report'});
+    }
+    if(report.status !== 'pending'){
+      return res.status(400).json({success:false, message: 'Only pending reports can be deleted'});
+    }
+    await Issue.deleteOne({_id: id});
+    return res.status(200).json({success:true, message: 'Report deleted successfully'});
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500) // unexpected error → server error
+      .json({ success: false, message: "Something went wrong" });
+  }
+}

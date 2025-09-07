@@ -4,19 +4,24 @@ import { checkSimilarity } from '../middleware/checkSimilarity.js';
 import {confirmReport, getUserReportedIssues, getUserStats,
 getWardStats, getPendingIssues, getVerifiedIssues, getTopReporters, getTopWards,
 getAllVerifiedIssues, getWardUsers, getAnalyticsByRange, getReports, getReportById,
-verifyIssue, cancelIssue, resolveIssue, getMyReports
+verifyIssue, cancelIssue, resolveIssue, getMyReports, deleteReport
 } from '../controllers/issue.controller.js';
 import { isAdmin } from '../middleware/isAdmin.js';
 
 const router=express.Router();
 
-router.post('/report-issue', verifyToken, checkSimilarity, confirmReport);
+// router.post('/report-issue', verifyToken, checkSimilarity, confirmReport);
+router.post('/report-issue', verifyToken, checkSimilarity, (req, res) => {
+  res.status(200).json({ success: true, message: 'No similar issues found.' });
+});
+
 router.post('/confirm-report', verifyToken, confirmReport);
 
 //User
 router.get('/user-reported-issues', verifyToken, getUserReportedIssues);
 router.get('/user-stats', verifyToken, getUserStats);
 router.get('/my-reports', verifyToken, getMyReports);
+router.delete('/delete-report/:id', verifyToken, deleteReport);
 
 //Admin
 router.get('/admin/ward-stats', verifyToken, isAdmin, getWardStats);

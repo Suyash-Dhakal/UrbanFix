@@ -24,6 +24,7 @@ export const checkSimilarity=async (req,res,next)=>{
                 title: issue.title,
                 description: issue.description,
                 ward: issue.ward,
+                category: issue.category,
                 image: Array.isArray(issue.image) ? issue.image : (issue.image ? [issue.image] : []),
                 similarity: (similarityScore * 100).toFixed(2) + '%'
             });
