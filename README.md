@@ -71,16 +71,6 @@ https://github.com/user-attachments/assets/e7fb4105-5b31-4ae5-9b5e-fc08040e725e
 
 ---
 
-## 🛠️ System Design 
-
-### 🧩 Use Case Diagram
-![Use Case Diagram](assets/use-case-diagram.png)
-
-### 🧭 System Flowchart  
-![System Flowchart](assets/system-flowchart.png)
-
----
-
 ### 🎬 Video Demo & Other Previews
 
 
