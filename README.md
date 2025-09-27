@@ -82,8 +82,7 @@ https://github.com/user-attachments/assets/e7fb4105-5b31-4ae5-9b5e-fc08040e725e
 ---
 
 ### 🎬 Video Demo & Other Previews
-<details>
-<summary>Click to expand</summary>
+
 
 ### User Dashboard
 https://github.com/user-attachments/assets/0efb6bc0-e273-46e5-9c9b-603aafac0736
@@ -102,8 +101,6 @@ https://github.com/user-attachments/assets/fccac6fc-df81-40fa-ab4c-0fc84e579804
 
 ### Hall of Fame
 https://github.com/user-attachments/assets/b70b7a4b-e73b-4052-adf8-4d755d42ec96
-
-</details>
 
 ---
 
